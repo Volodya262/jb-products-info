@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: jb-products-info
+  profiles:
+    active: ${APP_PROFILE:default}
