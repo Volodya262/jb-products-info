@@ -30,6 +30,7 @@ dependencies {
 
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.14.1")
     implementation("org.apache.httpcomponents:httpclient")
+    implementation("org.apache.commons:commons-compress:1.22")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }

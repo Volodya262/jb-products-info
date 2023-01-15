@@ -1,4 +1,4 @@
-package com.volodya262.jbproductsinfo.application
+package com.volodya262.jbproductsinfo.application.clients
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
@@ -11,15 +11,15 @@ import java.time.format.DateTimeFormatter
 
 @Component
 class JetBrainsProductInfoClient(
-    val jetBrainsXmlRestTemplate: RestTemplate
+    val xmlProductInfoRestTemplate: RestTemplate
 ) {
     fun getProductInfo() {
-        val resp = jetBrainsXmlRestTemplate.getForObject<ProductsXml>("https://www.jetbrains.com/updates/updates.xml")
+        val resp = xmlProductInfoRestTemplate.getForObject<ProductsXml>("https://www.jetbrains.com/updates/updates.xml")
 
         val res = resp.products.flatMap { it.toBuildInfoTemps() }
         println(res)
 
-        // TODO figure out the domain model 
+        // TODO figure out the domain model
     }
 }
 

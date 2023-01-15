@@ -1,6 +1,6 @@
 package com.volodya262.jbproductsinfo
 
-import com.volodya262.jbproductsinfo.application.JetBrainsProductInfoClient
+import com.volodya262.jbproductsinfo.application.clients.JetBrainsProductInfoClient
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -14,15 +14,4 @@ class JbProductsInfoApplicationTests(
     @Test
     fun contextLoads() {
     }
-
-    @Test
-    fun foo() {
-        jetBrainsProductInfoClient.getProductInfo()
-    }
-
 }
-
-//@JsonRootName("products")
-//class ProductsXml(
-//	val products: List<Any>
-//)

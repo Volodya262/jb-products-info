@@ -3,6 +3,7 @@ package com.volodya262.jbproductsinfo.application
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.volodya262.jbproductsinfo.application.clients.ProductsXml
 import org.junit.jupiter.api.Test
 
 class ProductsXmlTest {

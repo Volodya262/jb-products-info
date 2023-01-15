@@ -9,7 +9,8 @@ import org.springframework.web.client.RestTemplate
 class ClientsConfig {
 
     @Bean
-    fun jetBrainsXmlRestTemplate(): RestTemplate {
+    fun xmlProductInfoRestTemplate(): RestTemplate {
+        // TODO connections pool
         val clientHttpRequestFactory = HttpComponentsClientHttpRequestFactory().apply {
             setConnectTimeout(5000)
             setConnectionRequestTimeout(5000)
@@ -19,8 +20,15 @@ class ClientsConfig {
         return RestTemplate(clientHttpRequestFactory)
     }
 
-//    @Bean
-//    fun jetbrainsProductInfoWebClient(): WebClient {
-//        return WebClient.builder().build()
-//    }
+    @Bean
+    fun distributionsRestTemplate(): RestTemplate {
+        // TODO connections pool
+        val clientHttpRequestFactory = HttpComponentsClientHttpRequestFactory().apply {
+            setConnectTimeout(5000)
+            setConnectionRequestTimeout(5000)
+            setReadTimeout(5000)
+        }
+
+        return RestTemplate(clientHttpRequestFactory)
+    }
 }
