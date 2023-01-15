@@ -29,6 +29,7 @@ dependencies {
     runtimeOnly("org.postgresql:postgresql")
 
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.14.1")
+    implementation("org.apache.httpcomponents:httpclient")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
