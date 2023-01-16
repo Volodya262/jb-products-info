@@ -1,13 +1,15 @@
-package com.volodya262.jbproductsinfo.application.clients
+package com.volodya262.jbproductsinfo.application.services
 
 import com.volodya262.jbproductsinfo.domain.DistributionNotFound
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
+import org.springframework.stereotype.Component
 import org.springframework.util.StreamUtils
 import org.springframework.web.client.RestTemplate
 import java.io.File
 import java.io.FileOutputStream
 
+@Component
 class DistributionDownloader(
     private val distributionsRestTemplate: RestTemplate
 ) {

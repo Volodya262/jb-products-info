@@ -14,7 +14,7 @@ class ProductsXmlTest {
         }
         val res = xmlMapper.readValue<ProductsXml>(xmlString)
 
-        val buildInfos = res.products[0].toBuildInfoTemps()
+        val buildInfos = res.products[0].toBuildInfoTemps { true }
 
         println(buildInfos)
     }

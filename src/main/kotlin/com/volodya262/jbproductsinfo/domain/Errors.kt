@@ -9,6 +9,6 @@ class DistributionNotFound(
     url: String,
     distributionName: String
 ) : BusinessLogicError(
-    errorCode = "DistibutionNotFound",
+    errorCode = "DistributionNotFound",
     readableMessage = "Distribution $distributionName not found by url: $url."
 )
