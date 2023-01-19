@@ -16,6 +16,14 @@ repositories {
     mavenCentral()
 }
 
+extra["springCloudVersion"] = "2021.0.5"
+
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")
+    }
+}
+
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
@@ -33,12 +41,19 @@ dependencies {
     implementation("org.apache.commons:commons-compress:1.22")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.cloud:spring-cloud-contract-wiremock")
+    testImplementation("com.github.tomakehurst:wiremock-jre8:2.35.0")
+    testImplementation("com.ninja-squad:springmockk:3.1.1")
+    testImplementation("com.jayway.jsonpath:json-path:2.7.0")
+    testImplementation("com.jayway.jsonpath:json-path-assert:2.7.0")
+    testImplementation("org.hamcrest:hamcrest:2.2")
 }
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
         jvmTarget = "17"
+//        allWarningsAsErrors = true
     }
 }
 

@@ -14,7 +14,7 @@ class ClientsConfig(
 ) {
 
     @Bean
-    fun jetBrainsProductsInfoRestTemplate(): RestTemplate {
+    fun jetBrainsUpdatesRestTemplate(): RestTemplate {
         // TODO connections pool
         val clientHttpRequestFactory = HttpComponentsClientHttpRequestFactory().apply {
             setConnectTimeout(5000)

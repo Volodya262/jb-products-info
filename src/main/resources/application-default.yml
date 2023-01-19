@@ -8,3 +8,6 @@ spring:
     url: jdbc:postgresql://127.0.0.1:11050/${spring.application.name}
     username: postgres
     password: pwd
+client:
+  jetbrains-updates-url: https://www.jetbrains.com/updates
+  jetbrains-data-services-url: https://data.services.jetbrains.com

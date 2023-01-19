@@ -1,5 +1,6 @@
 package com.volodya262.jbproductsinfo.application.services
 
+import com.volodya262.jbproductsinfo.domain.TargetFileNotFound
 import org.apache.commons.compress.archivers.ArchiveEntry
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
@@ -32,7 +33,7 @@ class ArchiveAnalyzer {
                 entry = tarArchiveInputStream.nextEntry
             }
 
-            return@usingTarArchiveInputStream "" // TODO error
+            throw TargetFileNotFound(targetFileName, "some description")
         }
     }
 }

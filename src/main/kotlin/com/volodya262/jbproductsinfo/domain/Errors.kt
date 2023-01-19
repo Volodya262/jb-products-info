@@ -12,3 +12,11 @@ class DistributionNotFound(
     errorCode = "DistributionNotFound",
     readableMessage = "Distribution $distributionName not found by url: $url."
 )
+
+class TargetFileNotFound(
+    val targetFileName: String,
+    val buildDescription: String
+) : BusinessLogicError(
+    errorCode = "TargetFileNotFound",
+    readableMessage = "File $targetFileName not found in distribution file $buildDescription"
+)

@@ -4,4 +4,4 @@ spring:
   application:
     name: jb-products-info
   profiles:
-    active: ${APP_PROFILE:default}
+    active: ${APP_PROFILE:test}

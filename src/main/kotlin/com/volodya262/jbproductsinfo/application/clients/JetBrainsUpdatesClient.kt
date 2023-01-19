@@ -4,8 +4,8 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
 import com.volodya262.jbproductsinfo.domain.BuildInfo
-import com.volodya262.jbproductsinfo.domain.Product
-import com.volodya262.jbproductsinfo.domain.ProductsInfo
+import com.volodya262.jbproductsinfo.domain.FamilyGroupBuilds
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.getForObject
@@ -13,35 +13,44 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Component
-class JetBrainsProductsInfoClient(
-    val jetBrainsProductsInfoRestTemplate: RestTemplate
+class JetBrainsUpdatesClient(
+    val jetBrainsUpdatesRestTemplate: RestTemplate,
+    @Value("\${client.jetbrains-updates-url}")
+    val baseUrl: String
 ) {
-    fun getProductsInfo(buildsAfter: LocalDate): ProductsInfo {
-        val url = "https://www.jetbrains.com/updates/updates.xml"
-        val productsXml = jetBrainsProductsInfoRestTemplate.getForObject<ProductsXml>(url)
-
-        val products = productsXml.products.map { Product(productCode = it.code, productName = it.name) }
+    fun getBuilds(): List<FamilyGroupBuilds> {
+        val url = "$baseUrl/updates.xml"
+        val productsXml = jetBrainsUpdatesRestTemplate.getForObject<ProductsXml>(url)
 
         val productCodeToBuildsMap = productsXml.products
             .map { productXml ->
                 val productBuilds = productXml
                     .toBuildInfoTemps(channelFilterPredicate = { channel -> channel.status == "release" })
                     .filter { it.allRequiredFieldsFilled }
-                    .filter { it.releaseDate!!.isAfter(buildsAfter) }
                     .map {
                         BuildInfo(
                             productCode = it.productCode!!,
-                            releaseDate = it.releaseDate!!,
+                            buildReleaseDate = it.releaseDate!!,
                             buildVersion = it.buildVersion!!,
-                            buildNumber = it.buildNumber!!
+                            buildFullNumber = it.buildFullNumber!!
                         )
                     }
 
-                return@map productXml.code to productBuilds
-            }.toMap()
+                return@map FamilyGroupBuilds(
+                    relatedProductCodes = productXml.codes.toSet(),
+                    familyGroupName = productXml.name,
+                    builds = productBuilds
+                )
+            }
 
-        return ProductsInfo(products, productCodeToBuildsMap)
+        return productCodeToBuildsMap
     }
+
+//    fun getProducts(): List<BuildGroupProduct> {
+//        val url = "$baseUrl/updates.xml"
+//        val productsXml = jetBrainsUpdatesRestTemplate.getForObject<ProductsXml>(url)
+//        return productsXml.products.map { BuildGroupProduct(relatedProductCodes = it.codes.toSet(), productName = it.name) }
+//    }
 }
 
 @JacksonXmlRootElement(localName = "products")
@@ -52,8 +61,9 @@ class ProductsXml {
 }
 
 class ProductXml {
+    @JacksonXmlElementWrapper(useWrapping = false)
     @JacksonXmlProperty(localName = "code")
-    lateinit var code: String
+    lateinit var codes: List<String>
 
     @JacksonXmlProperty(isAttribute = true)
     lateinit var name: String
@@ -64,7 +74,7 @@ class ProductXml {
 
     fun toBuildInfoTemps(channelFilterPredicate: (ProductChannelXml) -> Boolean): List<BuildInfoTemp> =
         channels.filter { channelFilterPredicate(it) }
-            .flatMap { channel -> channel.toBuildInfoTemps().map { it.apply { productCode = code } } }
+            .flatMap { channel -> channel.toBuildInfoTemps().map { it.apply { productCode = codes.first() } } }
 }
 
 class ProductChannelXml {
@@ -84,6 +94,9 @@ class ProductChannelXml {
 
 class ProductBuildXml {
     @JacksonXmlProperty(isAttribute = true)
+    var fullNumber: String? = null
+
+    @JacksonXmlProperty(isAttribute = true)
     lateinit var number: String
 
     @JacksonXmlProperty(isAttribute = true)
@@ -100,7 +113,7 @@ class ProductBuildXml {
         val releaseDateParsed = releaseDate?.let { LocalDate.parse(it, formatter) }
 
         return BuildInfoTemp().apply {
-            buildNumber = number
+            buildFullNumber = fullNumber ?: number
             buildVersion = version
             releaseDate = releaseDateParsed
         }
@@ -109,12 +122,13 @@ class ProductBuildXml {
 
 class BuildInfoTemp {
     var productCode: String? = null
-    var channelId: String? = null // TODO maybe delete it
+    var channelId: String? = null
     var channelStatus: String? = null
     var buildVersion: String? = null
-    var buildNumber: String? = null
+    var buildFullNumber: String? = null
     var releaseDate: LocalDate? = null
 
     val allRequiredFieldsFilled: Boolean
-        get() = productCode != null && channelId != null && channelStatus != null && buildVersion != null && buildNumber != null && releaseDate != null
+        get() = productCode != null && channelId != null && channelStatus != null &&
+                buildVersion != null && buildFullNumber != null && releaseDate != null
 }
