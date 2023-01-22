@@ -5,6 +5,9 @@ server:
       max: 20
   port: 12000
 spring:
+  thymeleaf:
+    prefix: file:src/main/resources/templates/
+    cache: false
   datasource:
     hikari:
       idle-timeout: 10000
@@ -19,7 +22,7 @@ spring:
     listener:
       missing-topics-fatal: false
       ack-mode: manual_immediate
-      concurrency: 4
+      concurrency: 2
     consumer:
       auto-offset-reset: earliest
       group-id: jb-products-info-worker
@@ -39,5 +42,5 @@ client:
   jetbrains-data-services-url: https://data.services.jetbrains.com
 kafka:
   builds-to-process:
-    concurrency: 4
+    concurrency: 1
     nack-sleep-time-seconds: 180

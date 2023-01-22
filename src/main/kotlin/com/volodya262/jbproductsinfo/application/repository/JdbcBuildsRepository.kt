@@ -3,6 +3,7 @@ package com.volodya262.jbproductsinfo.application.repository
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.volodya262.jbproductsinfo.domain.BuildInProcess
 import com.volodya262.jbproductsinfo.domain.BuildInProcessEvent
+import com.volodya262.jbproductsinfo.domain.BuildNotFound
 import com.volodya262.jbproductsinfo.domain.CurrentDateTimeProvider
 import com.volodya262.jbproductsinfo.domain.ProductCode
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
@@ -35,6 +36,10 @@ class JdbcBuildsRepository(
             val json = rs.getString("data")!!
             val event = objectMapper.readValue<BuildInProcessEvent>(json, BuildInProcessEvent::class.java)
             return@query Triple(productCode, buildFullNumber, event)
+        }
+
+        if (allEvents.isEmpty()) {
+            return emptyList()
         }
 
         return allEvents
@@ -70,6 +75,10 @@ class JdbcBuildsRepository(
         val events = jdbcTemplate.query(query, params) { rs, _ ->
             val json = rs.getString("data")
             return@query objectMapper.readValue<BuildInProcessEvent>(json, BuildInProcessEvent::class.java)
+        }
+
+        if (events.isEmpty()) {
+            throw BuildNotFound(productCode, buildFullNumber)
         }
 
         return BuildInProcess.fromEvents(productCode, buildFullNumber, events, currentDateTimeProvider)

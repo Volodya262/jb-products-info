@@ -12,6 +12,23 @@ class ProductNotFound(
     readableMessage = "Product not found by product code $productCode. Maybe it has only old builds"
 )
 
+class BuildNotFound(
+    productCode: ProductCode,
+    buildFullNumber: String
+) : BusinessLogicError(
+    errorCode = "BuildNotFound",
+    readableMessage = "Build not found by productCode $productCode and buildFullNumber $buildFullNumber"
+)
+
+class WrongBuildProcessingStatus(
+    productCode: ProductCode,
+    buildFullNumber: String,
+    status: BuildInProcessStatus
+) : BusinessLogicError(
+    errorCode = "WrongBuildProcessingStatus",
+    readableMessage = "Build for productCode $productCode, buildFullNumber $buildFullNumber has status $status"
+)
+
 abstract class BuildProcessingError(
     val failedToProcessReason: FailedToProcessReason,
     errorCode: String,
@@ -24,7 +41,7 @@ class DistributionDownloadError(
 ) : BuildProcessingError(
     errorCode = "DistributionDownloadError",
     readableMessage = "Error occured while downloading the distribution." +
-            "Server responded $statusCode. build: {$buildInProcess}.",
+        "Server responded $statusCode. build: {$buildInProcess}.",
     failedToProcessReason = FailedToProcessReason.DistributionDownloadError
 )
 
