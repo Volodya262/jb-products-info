@@ -1,39 +1,55 @@
 package com.volodya262.jbproductsinfo.application.services
 
+import com.volodya262.jbproductsinfo.domain.BuildInProcess
 import com.volodya262.jbproductsinfo.domain.TargetFileNotFound
 import org.apache.commons.compress.archivers.ArchiveEntry
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileInputStream
+import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.nio.file.Paths
 
 @Component
 class ArchiveAnalyzer {
-    fun findFileContentsInTarGzArchive(tarGzFile: File, targetFileName: String): String {
-        return usingTarArchiveInputStream(tarGzFile) { tarArchiveInputStream ->
-            var entry: ArchiveEntry? = tarArchiveInputStream.nextEntry
-            while (entry != null) {
-                if (!tarArchiveInputStream.canReadEntryData(entry)) {
-                    println("Failed to read entry data")
-                    continue
+
+    val logger: Logger = LoggerFactory.getLogger(ArchiveAnalyzer::class.java)
+
+    fun findFileContentsInTarGzArchive(
+        tarGzFile: File,
+        targetFileName: String,
+        buildInProcess: BuildInProcess
+    ): String {
+        try {
+            return usingTarArchiveInputStream(tarGzFile) { tarArchiveInputStream ->
+                var entry: ArchiveEntry? = tarArchiveInputStream.nextEntry
+                while (entry != null) {
+                    if (!tarArchiveInputStream.canReadEntryData(entry)) {
+                        println("Failed to read entry data")
+                        continue
+                    }
+
+                    val entryFileName = Paths.get(entry.name).fileName.toString()
+                    if (entryFileName == targetFileName) {
+                        return@usingTarArchiveInputStream String(
+                            bytes = tarArchiveInputStream.readAllBytes(),
+                            charset = StandardCharsets.UTF_8
+                        )
+                    }
+
+                    entry = tarArchiveInputStream.nextEntry
                 }
 
-                val entryFileName = Paths.get(entry.name).fileName.toString()
-                if (entryFileName == targetFileName) {
-                    return@usingTarArchiveInputStream String(
-                        bytes = tarArchiveInputStream.readAllBytes(),
-                        charset = StandardCharsets.UTF_8
-                    )
-                }
-
-                entry = tarArchiveInputStream.nextEntry
+                throw TargetFileNotFound(targetFileName, buildInProcess)
             }
-
-            throw TargetFileNotFound(targetFileName, "some description")
+        } catch (ex: IOException) {
+            logger.error("IOException occured while analyzing build: $buildInProcess", ex)
+            throw ex
         }
     }
 }

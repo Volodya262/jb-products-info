@@ -1,7 +1,7 @@
 package com.volodya262.jbproductsinfo.application.clients
 
 import com.volodya262.jbproductsinfo.domain.BuildInfo
-import com.volodya262.jbproductsinfo.libraries.testextensions.stubForXmlGet
+import com.volodya262.libraries.testextensions.stubForXmlGet
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.containsInAnyOrder
 import org.junit.jupiter.api.Test
@@ -25,7 +25,7 @@ class JetBrainsUpdatesClientTest(
         }
 
         // act
-        val productCodeToBuildsMap = jetBrainsUpdatesClient.getBuilds()
+        val productCodeToBuildsMap = jetBrainsUpdatesClient.getBuilds(null)
 
         // assert
         val expectedClBuilds = listOf(

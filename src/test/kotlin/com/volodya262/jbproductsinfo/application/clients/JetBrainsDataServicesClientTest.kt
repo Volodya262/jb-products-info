@@ -1,6 +1,6 @@
 package com.volodya262.jbproductsinfo.application.clients
 
-import com.volodya262.jbproductsinfo.libraries.testextensions.stubForJsonGet
+import com.volodya262.libraries.testextensions.stubForJsonGet
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.arrayWithSize
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -24,11 +24,11 @@ class JetBrainsDataServicesClientTest(
 
         val clionDownloadInfos = downloadInfos.find { it.product.productCode == "CL" }
         assertNotNull(clionDownloadInfos)
-        assertThat(clionDownloadInfos!!.buildDownloadInfos.toTypedArray(), arrayWithSize(5))
+        assertThat(clionDownloadInfos!!.productReleases.toTypedArray(), arrayWithSize(5))
 
         val dataSpellDownloadInfos = downloadInfos.find { it.product.productCode == "DS" }
         assertNotNull(dataSpellDownloadInfos)
-        assertThat(dataSpellDownloadInfos!!.buildDownloadInfos.toTypedArray(), arrayWithSize(2))
+        assertThat(dataSpellDownloadInfos!!.productReleases.toTypedArray(), arrayWithSize(2))
     }
 
     val simpleJson =

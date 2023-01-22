@@ -1,10 +1,10 @@
 package com.volodya262.jbproductsinfo.application.clients
 
-import com.volodya262.jbproductsinfo.domain.BuildDownloadInfo
 import com.volodya262.jbproductsinfo.domain.Product
 import com.volodya262.jbproductsinfo.domain.ProductAndBuildDownloadInfos
 import com.volodya262.jbproductsinfo.domain.ProductCode
-import com.volodya262.jbproductsinfo.libraries.resttemplateextensions.getForObjectReified
+import com.volodya262.jbproductsinfo.domain.ProductRelease
+import com.volodya262.libraries.resttemplateextensions.getForObjectReified
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
@@ -17,54 +17,49 @@ class JetBrainsDataServicesClient(
     @Value("\${client.jetbrains-data-services-url}")
     val baseUrl: String
 ) {
-    fun getProductDownloadsInfos(): List<ProductAndBuildDownloadInfos> {
+    fun getProductDownloadsInfos(
+        filterProductCode: ProductCode? = null,
+        filterReleasedAfter: LocalDate? = null
+    ): List<ProductAndBuildDownloadInfos> {
         val url = "$baseUrl/products"
         val productInfoDtos = jetBrainsDataServicesRestTemplate.getForObjectReified<List<ProductInfoDto>>(url)!!
 
         val productCodeToBuildDownloadInfosMap = productInfoDtos
+            .filter { filterProductCode == null || it.allProductCodes.contains(filterProductCode) }
             .map { productInfo ->
-                val buildDownloadInfos = productInfo.releases
+                val productReleases = productInfo.releases
+                    .filter { it.build != null && it.dateAsLocalDate.isAfter(filterReleasedAfter) }
                     .map { release ->
-                        BuildDownloadInfo(
+                        ProductRelease(
                             productCode = productInfo.resolvedProductCode,
                             buildReleaseDate = release.dateAsLocalDate,
                             buildVersion = release.version,
-                            buildDownloadUrl = release.downloads?.linux?.link,
-                            buildFullNumber = release.build
+                            downloadUrl = release.downloads?.linux?.link,
+                            buildFullNumber = release.build!!
                         )
                     }
 
-                return@map ProductAndBuildDownloadInfos(productInfo.toProduct(), buildDownloadInfos)
+                return@map ProductAndBuildDownloadInfos(productInfo.toProduct(), productReleases)
             }
 
         return productCodeToBuildDownloadInfosMap
     }
-
-    fun getProducts(): List<Product> {
-        val url = "$baseUrl/products"
-        val productInfoDtos = jetBrainsDataServicesRestTemplate.getForObjectReified<List<ProductInfoDto>>(url)!!
-
-        return productInfoDtos.map {
-            Product(
-                productCode = it.resolvedProductCode,
-                productName = it.name,
-                alternativeCodes = it.resolvedAlternativeProductCodes
-            )
-        }
-    }
 }
 
 class ProductInfoDto(
-    private val intellijProductCode: String,
+    private val intellijProductCode: String?,
     private val code: String,
     private val alternativeCodes: List<String>?,
     val name: String,
     val releases: List<ProductInfoReleaseDto>
 ) {
     val resolvedProductCode: ProductCode =
-        intellijProductCode
+        intellijProductCode ?: code
     val resolvedAlternativeProductCodes: Set<ProductCode> =
-        ((alternativeCodes ?: emptyList()) + listOf(code)).toSet().minus(intellijProductCode)
+        ((alternativeCodes ?: emptyList()) + listOf(code)).toSet().minus(resolvedProductCode)
+    val allProductCodes: Set<ProductCode> =
+        ((alternativeCodes ?: emptyList()) + listOf(code, intellijProductCode)).filterNotNull().toSet()
+
     fun toProduct() =
         Product(
             productCode = resolvedProductCode,
@@ -76,7 +71,7 @@ class ProductInfoDto(
 class ProductInfoReleaseDto(
     val date: String,
     val version: String,
-    val build: String, // build full number, i.e. 222.111.333
+    val build: String?, // build full number, i.e. 222.111.333
     val downloads: ProductInfoReleaseDownloadsDto?
 ) {
     companion object {
@@ -94,3 +89,4 @@ class ProductInfoReleaseDownloadsDto(
 class ProductInfoReleaseDownloadItemDto(
     val link: String
 )
+

@@ -18,7 +18,7 @@ class JetBrainsUpdatesClient(
     @Value("\${client.jetbrains-updates-url}")
     val baseUrl: String
 ) {
-    fun getBuilds(): List<FamilyGroupBuilds> {
+    fun getBuilds(buildReleasedAfter: LocalDate?): List<FamilyGroupBuilds> {
         val url = "$baseUrl/updates.xml"
         val productsXml = jetBrainsUpdatesRestTemplate.getForObject<ProductsXml>(url)
 
@@ -27,6 +27,7 @@ class JetBrainsUpdatesClient(
                 val productBuilds = productXml
                     .toBuildInfoTemps(channelFilterPredicate = { channel -> channel.status == "release" })
                     .filter { it.allRequiredFieldsFilled }
+                    .filter { buildReleasedAfter == null || it.releaseDate!!.isAfter(buildReleasedAfter) }
                     .map {
                         BuildInfo(
                             productCode = it.productCode!!,

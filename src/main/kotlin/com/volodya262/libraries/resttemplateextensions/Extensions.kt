@@ -1,4 +1,4 @@
-package com.volodya262.jbproductsinfo.libraries.resttemplateextensions
+package com.volodya262.libraries.resttemplateextensions
 
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpMethod

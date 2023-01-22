@@ -2,8 +2,14 @@ package com.volodya262.jbproductsinfo
 
 import com.volodya262.jbproductsinfo.application.clients.JetBrainsDataServicesClient
 import com.volodya262.jbproductsinfo.application.clients.JetBrainsUpdatesClient
-import com.volodya262.jbproductsinfo.libraries.testextensions.stubForJsonGet
-import com.volodya262.jbproductsinfo.libraries.testextensions.stubForXmlGet
+import com.volodya262.jbproductsinfo.application.repository.JdbcBuildsRepository
+import com.volodya262.jbproductsinfo.application.repository.JdbcProductsRepository
+import com.volodya262.jbproductsinfo.application.services.BuildQueueService
+import com.volodya262.jbproductsinfo.application.services.RemoteBuildsInfoProviderService
+import com.volodya262.libraries.testextensions.stubForJsonGet
+import com.volodya262.libraries.testextensions.stubForXmlGet
+import org.intellij.lang.annotations.Language
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -18,8 +24,18 @@ import org.springframework.test.web.servlet.MockMvc
 class JbProductsInfoApplicationTests(
     @Autowired val jetBrainsUpdatesClient: JetBrainsUpdatesClient,
     @Autowired val jetBrainsDataServicesClient: JetBrainsDataServicesClient,
-    @Autowired val mockMvc: MockMvc
+    @Autowired val remoteBuildsInfoProviderService: RemoteBuildsInfoProviderService,
+    @Autowired val buildQueueService: BuildQueueService,
+    @Autowired val mockMvc: MockMvc,
+    @Autowired val jdbcBuildsRepository: JdbcBuildsRepository,
+    @Autowired val jdbcProductsRepository: JdbcProductsRepository
 ) {
+
+    @BeforeEach
+    fun beforeEach() {
+        jdbcBuildsRepository.deleteAll()
+        jdbcProductsRepository.deleteAll()
+    }
 
     @Test
     fun contextLoads() {
@@ -35,31 +51,10 @@ class JbProductsInfoApplicationTests(
             json2
         }
 
-        val allProductsWithDownloadInfo = jetBrainsDataServicesClient.getProductDownloadsInfos()
-        val familyGroupBuildsList = jetBrainsUpdatesClient.getBuilds()
-
-        val productAndAssociatedBuildsList = allProductsWithDownloadInfo
-            .map { dataServicesProduct ->
-                Pair(
-                    dataServicesProduct,
-                    familyGroupBuildsList.find { it.relatedProductCodes.contains(dataServicesProduct.product.productCode) }
-                )
-            }
-            .filter { it.second != null }
-
-//        val downloads = jetBrainsDataServicesClient.getProductDownloadsInfos()
-
-//        productAndAssociatedBuildsList.map { product ->
-//            val associatedBuilds = builds.find { it.relatedProductCodes.contains(product.productCode) }!!.builds
-//            val downloadInfos = downloads.find { it.productCode == product.productCode }!!.buildDownloadInfos
-//
-//            val res = buildInfoMergeService.merge(associatedBuilds, downloadInfos, product.productCode)
-//            println(associatedBuilds)
-//        }
-
-        println(productAndAssociatedBuildsList)
+        buildQueueService.checkAndQueueBuilds()
     }
 
+    @Language("JSON")
     val simpleJson =
         """
             [
@@ -254,6 +249,7 @@ class JbProductsInfoApplicationTests(
             ]
         """.trimIndent()
 
+    @Language("XML")
     val simpleXml =
         """
             <products>
@@ -351,7 +347,7 @@ class JbProductsInfoApplicationTests(
             </products>
         """.trimIndent()
 
-    // TODO add IIU old build info
+    @Language("JSON")
     val json2 = """
         [
           {
@@ -530,14 +526,14 @@ class JbProductsInfoApplicationTests(
                 "patches": {},
                 "downloads": {
                   "windows": {
-                    "link": "https://download.jetbrains.com/idea/ideaIC-15.0.6.exe",
+                    "link": "https://download.jetbrains.com/idea/ideaIU-15.0.6.exe",
                     "size": 254961168,
-                    "checksumLink": "https://download.jetbrains.com/idea/ideaIC-15.0.6.exe.sha256"
+                    "checksumLink": "https://download.jetbrains.com/idea/ideaIU-15.0.6.exe.sha256"
                   },
                   "linux": {
-                    "link": "https://download.jetbrains.com/idea/ideaIC-15.0.6.tar.gz",
+                    "link": "https://download.jetbrains.com/idea/ideaIU-15.0.6.tar.gz",
                     "size": 234630621,
-                    "checksumLink": "https://download.jetbrains.com/idea/ideaIC-15.0.6.tar.gz.sha256"
+                    "checksumLink": "https://download.jetbrains.com/idea/ideaIU-15.0.6.tar.gz.sha256"
                   }
                 },
                 "notesLink": "https://confluence.jetbrains.com/display/IDEADEV/IntelliJ+IDEA+2016.1.3+Release+Notes",

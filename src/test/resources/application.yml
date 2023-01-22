@@ -1,7 +1,12 @@
 server:
-  port: 11051
+  port: 12000
 spring:
   application:
     name: jb-products-info
   profiles:
     active: ${APP_PROFILE:test}
+builds-in-process-expire:
+  queued-expire-minutes: 90
+  processing-expire-minutes: 90
+  failed-to-process-expire-minutes: 90
+target-builds-age-days: 90

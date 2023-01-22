@@ -8,11 +8,25 @@ spring:
     url: jdbc:postgresql://127.0.0.1:11050/${spring.application.name}
     username: postgres
     password: pwd
+  kafka:
+    bootstrap-servers: localhost:11052
+    listener:
+      missing-topics-fatal: false
+      ack-mode: manual_immediate
+    consumer:
+      auto-offset-reset: earliest
+      group-id: jb-products-info-worker
+    producer:
+      client-id: jb-products-info
 client:
   #  jetbrains-updates-url: https://www.jetbrains.com/updates
   jetbrains-updates-url: http://localhost:${wiremock.server.port}/jetbrains-updates/
   #  jetbrains-data-services-url: https://data.services.jetbrains.com
   jetbrains-data-services-url: http://localhost:${wiremock.server.port}/data-services/
+kafka:
+  builds-to-process:
+    concurrency: 1
+    nack-sleep-time-seconds: 180
 wiremock:
   server:
-    port: 8080
+    port: 8084

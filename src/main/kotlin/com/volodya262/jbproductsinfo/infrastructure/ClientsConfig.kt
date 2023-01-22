@@ -1,4 +1,4 @@
-package com.volodya262.jbproductsinfo.infrastructure.clients
+package com.volodya262.jbproductsinfo.infrastructure
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.boot.web.client.RestTemplateBuilder
@@ -47,6 +47,7 @@ class ClientsConfig(
             setConnectTimeout(5000)
             setConnectionRequestTimeout(5000)
             setReadTimeout(5000)
+            setBufferRequestBody(false)
         }
 
         return RestTemplate(clientHttpRequestFactory)

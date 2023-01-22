@@ -1,40 +1,44 @@
 package com.volodya262.jbproductsinfo.application.services
 
+import com.volodya262.jbproductsinfo.domain.BuildInProcess
+import com.volodya262.jbproductsinfo.domain.DistributionDownloadError
 import com.volodya262.jbproductsinfo.domain.DistributionNotFound
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import org.springframework.util.StreamUtils
 import org.springframework.web.client.RestTemplate
-import java.io.File
-import java.io.FileOutputStream
+import java.io.OutputStream
 
 @Component
 class DistributionDownloader(
     private val distributionsRestTemplate: RestTemplate
 ) {
-    companion object {
-        const val baseUrl = "https://download.jetbrains.com"
-        const val tempFilePrefix = "download-"
-        const val fileName = "jetbrains-toolbox-1.27.2.13801.tar.gz"
-    }
 
-    fun downloadDistributionToTempFolder(url: String, name: String): File {
-        return distributionsRestTemplate.execute<File?>(
-            baseUrl + url,
+    val logger: Logger = LoggerFactory.getLogger(DistributionDownloader::class.java)
+
+    fun downloadDistributionToOutputStream(build: BuildInProcess, outputStream: OutputStream) {
+        logger.info("Started downloading file for build {}", build)
+
+        distributionsRestTemplate.execute<Unit>(
+            build.downloadUrl!!,
             HttpMethod.GET,
             null,
             { clientHttpResponse ->
                 if (clientHttpResponse.statusCode == HttpStatus.NOT_FOUND) {
-                    throw DistributionNotFound(url, name)
+                    throw DistributionNotFound(build.productCode, build.buildFullNumber, build.downloadUrl!!)
                 }
 
-                val tempFile = File.createTempFile(tempFilePrefix, fileName)
-                FileOutputStream(tempFile).use {
-                    StreamUtils.copy(clientHttpResponse.body, it)
+                if (clientHttpResponse.statusCode.isError) {
+                    throw DistributionDownloadError(build, clientHttpResponse.statusCode.name)
                 }
 
-                tempFile
-            })!!
+                StreamUtils.copy(clientHttpResponse.body, outputStream)
+                return@execute
+            })
+
+        logger.info("Downloaded file for build {}", build)
     }
 }

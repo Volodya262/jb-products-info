@@ -1,3 +1,9 @@
+server:
+  jetty:
+    threads:
+      min: 20
+      max: 20
+  port: 12000
 spring:
   datasource:
     hikari:
@@ -8,6 +14,30 @@ spring:
     url: jdbc:postgresql://127.0.0.1:11050/${spring.application.name}
     username: postgres
     password: pwd
+  kafka:
+    bootstrap-servers: localhost:9092
+    listener:
+      missing-topics-fatal: false
+      ack-mode: manual_immediate
+      concurrency: 4
+    consumer:
+      auto-offset-reset: earliest
+      group-id: jb-products-info-worker
+      properties:
+        max:
+          poll:
+            interval:
+              ms: 600000 # 10 minutes
+            records: 1
+        request:
+          timeout:
+            ms: 900000 # 15 minutes
+    producer:
+      client-id: jb-products-info
 client:
   jetbrains-updates-url: https://www.jetbrains.com/updates
   jetbrains-data-services-url: https://data.services.jetbrains.com
+kafka:
+  builds-to-process:
+    concurrency: 4
+    nack-sleep-time-seconds: 180
