@@ -2,7 +2,6 @@ package com.volodya262.jbproductsinfo.domain
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.volodya262.jbproductsinfo.domain.BuildInProcessStatus.Created
-import com.volodya262.jbproductsinfo.domain.BuildInProcessStatus.DownloadUrlUpdated
 import com.volodya262.jbproductsinfo.domain.BuildInProcessStatus.Empty
 import com.volodya262.jbproductsinfo.domain.BuildInProcessStatus.Expired
 import com.volodya262.jbproductsinfo.domain.BuildInProcessStatus.FailedToConstruct
@@ -63,7 +62,7 @@ class BuildInProcess(
         return when (status) {
             Empty, Created -> true
             FailedToConstruct -> false
-            DownloadUrlUpdated, Queued -> expireParams.queuedExpireMinutes.isExpired(updatedAt)
+            Queued -> expireParams.queuedExpireMinutes.isExpired(updatedAt)
             Processing -> expireParams.processingExpireMinutes.isExpired(updatedAt)
             Processed -> false
             FailedToProcess ->
@@ -98,15 +97,6 @@ class BuildInProcess(
 
     fun toExpired() =
         applyNew(BuildInProcessExpiredEvent(nextEventNumber, currentDateTimeProvider.getOffsetDateTime()))
-
-    fun toDownloadUrlUpdated(downloadUrl: String) =
-        applyNew(
-            BuildInProcessDownloadUrlUpdated(
-                nextEventNumber,
-                currentDateTimeProvider.getOffsetDateTime(),
-                downloadUrl
-            )
-        )
 
     fun toProcessing() =
         applyNew(BuildInProcessProcessingEvent(nextEventNumber, currentDateTimeProvider.getOffsetDateTime()))
@@ -167,11 +157,6 @@ class BuildInProcess(
             }
 
             is BuildInProcessExpiredEvent -> status = Expired
-            is BuildInProcessDownloadUrlUpdated -> {
-                status = DownloadUrlUpdated
-                downloadUrl = event.downloadUrl
-                missingUrlReason = null
-            }
         }
     }
 
@@ -196,8 +181,7 @@ enum class BuildInProcessStatus {
     Processing,
     Processed,
     FailedToProcess,
-    Expired,
-    DownloadUrlUpdated
+    Expired
 }
 
 enum class FailedToProcessReason {
@@ -254,7 +238,4 @@ class BuildInProcessFailedToProcessEvent(
 ) : BuildInProcessEvent(eventNumber, createdAt)
 
 class BuildInProcessExpiredEvent(eventNumber: Int, createdAt: OffsetDateTime) :
-    BuildInProcessEvent(eventNumber, createdAt)
-
-class BuildInProcessDownloadUrlUpdated(eventNumber: Int, createdAt: OffsetDateTime, val downloadUrl: String) :
     BuildInProcessEvent(eventNumber, createdAt)

@@ -1,4 +1,4 @@
-package com.volodya262.jbproductsinfo.application.services
+package com.volodya262.jbproductsinfo.infrastructure
 
 import com.volodya262.jbproductsinfo.domain.CurrentDateTimeProvider
 import org.springframework.stereotype.Component

@@ -63,14 +63,9 @@ class BuildProcessorService(
 
             logger.info("Build processed. {}", buildInProcess)
             return true
-        } catch (ex: BuildProcessingError) {
-            logger.error("Caught BuildProcessingError. build: {}", buildInProcess, ex)
-            buildInProcess.toFailedToProcess(ex.failedToProcessReason)
-            buildInProcess.save(jdbcBuildsRepository)
-            return !ex.failedToProcessReason.shouldRetry
         } catch (ex: Exception) {
             logger.error("Caught exception. build: {}", buildInProcess, ex)
-            val failedToProcessReason = ex.toFailedToProcessReason()
+            val failedToProcessReason = if (ex is BuildProcessingError) ex.failedToProcessReason else ex.toFailedToProcessReason()
             buildInProcess.toFailedToProcess(failedToProcessReason)
             buildInProcess.save(jdbcBuildsRepository)
             return !failedToProcessReason.shouldRetry

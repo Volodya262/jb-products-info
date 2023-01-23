@@ -5,7 +5,6 @@ import com.volodya262.jbproductsinfo.application.repository.JdbcBuildsRepository
 import com.volodya262.jbproductsinfo.application.repository.JdbcProductsRepository
 import com.volodya262.jbproductsinfo.domain.BuildInProcess
 import com.volodya262.jbproductsinfo.domain.BuildInProcessExpireParams
-import com.volodya262.jbproductsinfo.domain.BuildInProcessStatus
 import com.volodya262.jbproductsinfo.domain.CurrentDateTimeProvider
 import com.volodya262.jbproductsinfo.domain.ProductCode
 import org.slf4j.Logger
@@ -45,10 +44,6 @@ class BuildQueueService(
         val buildsToQueue = remoteBuilds
             .map { remoteBuild ->
                 val existingBuild = existingBuildsMap[remoteBuild.generateId()] ?: return@map remoteBuild
-
-                if (existingBuild.status == BuildInProcessStatus.FailedToConstruct && remoteBuild.downloadUrl != null) {
-                    return@map existingBuild.apply { toDownloadUrlUpdated(remoteBuild.downloadUrl!!) }
-                }
 
                 if (existingBuild.shouldRequeue(buildInProcessExpireParams)) {
                     logger.info("Mark build is expired {}", existingBuild)

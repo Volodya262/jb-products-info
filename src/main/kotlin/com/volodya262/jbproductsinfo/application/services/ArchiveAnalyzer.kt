@@ -32,7 +32,11 @@ class ArchiveAnalyzer {
                 var entry: ArchiveEntry? = tarArchiveInputStream.nextEntry
                 while (entry != null) {
                     if (!tarArchiveInputStream.canReadEntryData(entry)) {
-                        println("Failed to read entry data")
+                        logger.warn(
+                            "Failed to read entry data. ProductCode: {}, buildFullNumber: {}",
+                            buildInProcess.productCode,
+                            buildInProcess.buildFullNumber
+                        )
                         continue
                     }
 
