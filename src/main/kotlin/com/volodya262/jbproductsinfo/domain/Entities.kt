@@ -32,7 +32,8 @@ class ProductRelease(
 )
 
 data class FamilyGroupBuilds(
-    val relatedProductCodes: Set<ProductCode>, // one build may correspond to different products, like Intellij IDEA Ultimate and Community
+    // one build may correspond to different products, like Intellij IDEA Ultimate and Community
+    val relatedProductCodes: Set<ProductCode>,
     val familyGroupName: String,
     val builds: List<BuildInfo>
 )
@@ -56,4 +57,3 @@ enum class MissingUrlReason {
     NoLinuxDistribution,
     FailedToFindAssociatedVersion
 }
-

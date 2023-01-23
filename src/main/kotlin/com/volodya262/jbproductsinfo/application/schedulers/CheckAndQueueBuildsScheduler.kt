@@ -8,7 +8,6 @@ import org.springframework.scheduling.support.CronTrigger
 import org.springframework.stereotype.Component
 import javax.annotation.PostConstruct
 
-
 @Component
 class CheckAndQueueBuildsScheduler(
     private val buildQueueService: BuildQueueService
@@ -21,11 +20,14 @@ class CheckAndQueueBuildsScheduler(
     @PostConstruct
     fun schedule() {
         val cronTrigger = CronTrigger("0 0 * * * *")
-        scheduler.schedule({
-            logger.info("Refreshing build info on schedule...")
-            val res = buildQueueService.checkAndQueueBuilds()
-            logger.info("Refreshed build info. Queued ${res.size} builds. $res")
-        }, cronTrigger)
+        scheduler.schedule(
+            {
+                logger.info("Refreshing build info on schedule...")
+                val res = buildQueueService.checkAndQueueBuilds()
+                logger.info("Refreshed build info. Queued ${res.size} builds. $res")
+            },
+            cronTrigger
+        )
     }
 
     private fun createScheduler(): ThreadPoolTaskScheduler =

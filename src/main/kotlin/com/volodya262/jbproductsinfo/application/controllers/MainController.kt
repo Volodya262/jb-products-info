@@ -31,24 +31,24 @@ class MainController(
 
     @GetMapping("/")
     fun statusAsView(model: Model): String {
-        val status = getStatusDto()
-        model.addAttribute("status", status)
+        val status = getAppState()
+        model.addAttribute("appState", status)
         return "/main"
     }
 
     @GetMapping("/status")
     @ResponseBody
-    fun status(): StatusDto =
-        getStatusDto()
+    fun status(): AppStateDto =
+        getAppState()
 
-    private fun getStatusDto(): StatusDto {
+    private fun getAppState(): AppStateDto {
         val products = jdbcProductsRepository.getProducts()
         val builds = jdbcBuildsRepository.getBuilds()
             .map { BuildInProcessDto.from(it) }
             .sortedByDescending { it.updatedAt }
             .groupBy { it.productCode }
 
-        val productsDto =  products.map {
+        val productsDto = products.map {
             ProductDto(
                 productCode = it.productCode,
                 productName = it.productName,
@@ -58,7 +58,7 @@ class MainController(
             )
         }
 
-        return StatusDto(productsDto)
+        return AppStateDto(productsDto)
     }
 
     @PostMapping("/refresh")
@@ -76,7 +76,6 @@ class MainController(
     @GetMapping("/{productCode}")
     @ResponseBody
     fun getBuildsByProductCode(@PathVariable productCode: ProductCode): List<ProductBuildInfoDto> {
-
         return jdbcBuildsRepository.getBuilds()
             .sortedByDescending { it.updatedAt }
             .map { ProductBuildInfoDto.from(it) }
@@ -111,9 +110,8 @@ class ProductBuildInfoDto(
     }
 }
 
-class StatusDto(
-    val products: List<ProductDto>,
-
+class AppStateDto(
+    val products: List<ProductDto>
 )
 
 class ProductDto(
@@ -155,6 +153,4 @@ class BuildInProcessDto(
             "updatedAt=$updatedAt, missingUrlReason=$missingUrlReason, targetFileContents=$targetFileContents, " +
             "failedToProcessReason=$failedToProcessReason, releaseDate=$releaseDate, events=$events)"
     }
-
-
 }

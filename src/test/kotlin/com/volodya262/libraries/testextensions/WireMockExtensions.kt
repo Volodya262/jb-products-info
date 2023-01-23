@@ -43,4 +43,3 @@ fun stubForXmlGet(url: String, status: Int = 200, body: () -> String) {
             )
     )
 }
-

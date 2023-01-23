@@ -157,7 +157,7 @@ class MainControllerTest(
         // assert
         val publishedBuilds = publisherArgSlot.captured
         assertThat(publishedBuilds, hasSize(1))
-        assertTrue { publishedBuilds.find { it.buildFullNumber == "223.8214.51"} != null }
+        assertTrue { publishedBuilds.find { it.buildFullNumber == "223.8214.51" } != null }
 
         val buildsInDb = jdbcBuildsRepository.getBuilds()
         assertThat(buildsInDb, hasSize(2))
@@ -186,8 +186,8 @@ class MainControllerTest(
         // assert
         val products = jdbcProductsRepository.getProducts()
         assertThat(products, hasSize(2))
-        assertTrue {products.find { it.productCode == "CL" }!!.lastUpdate.isEqual(currentOffsetDateTime)}
-        assertTrue {products.find { it.productCode == "DS" }!!.lastUpdate.isEqual(currentOffsetDateTime)}
+        assertTrue { products.find { it.productCode == "CL" }!!.lastUpdate.isEqual(currentOffsetDateTime) }
+        assertTrue { products.find { it.productCode == "DS" }!!.lastUpdate.isEqual(currentOffsetDateTime) }
     }
 
     @Test
@@ -219,8 +219,8 @@ class MainControllerTest(
         // assert
         val products = jdbcProductsRepository.getProducts()
         assertThat(products, hasSize(2))
-        assertTrue {products.find { it.productCode == "CL" }!!.lastUpdate.isEqual(newCurrentOffsetDateTime)}
-        assertTrue {products.find { it.productCode == "DS" }!!.lastUpdate.isEqual(currentOffsetDateTime)}
+        assertTrue { products.find { it.productCode == "CL" }!!.lastUpdate.isEqual(newCurrentOffsetDateTime) }
+        assertTrue { products.find { it.productCode == "DS" }!!.lastUpdate.isEqual(currentOffsetDateTime) }
     }
 }
 
@@ -522,7 +522,7 @@ private val twoProductsWithSimpleCodesJson =
                     ]
                 }
             ]
-        """.trimIndent()
+    """.trimIndent()
 
 @Language("XML")
 private val twoProductsWithSimpleCodesXml =
@@ -574,6 +574,4 @@ private val twoProductsWithSimpleCodesXml =
                     </channel>
                 </product>
             </products>
-        """.trimIndent()
-
-
+    """.trimIndent()

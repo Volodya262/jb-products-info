@@ -89,4 +89,3 @@ class ProductInfoReleaseDownloadsDto(
 class ProductInfoReleaseDownloadItemDto(
     val link: String
 )
-

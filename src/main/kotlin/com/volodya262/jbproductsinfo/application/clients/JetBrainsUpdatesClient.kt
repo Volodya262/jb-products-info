@@ -131,5 +131,5 @@ class BuildInfoTemp {
 
     val allRequiredFieldsFilled: Boolean
         get() = productCode != null && channelId != null && channelStatus != null &&
-                buildVersion != null && buildFullNumber != null && releaseDate != null
+            buildVersion != null && buildFullNumber != null && releaseDate != null
 }

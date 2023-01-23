@@ -66,8 +66,9 @@ class BuildInProcess(
             DownloadUrlUpdated, Queued -> expireParams.queuedExpireMinutes.isExpired(updatedAt)
             Processing -> expireParams.processingExpireMinutes.isExpired(updatedAt)
             Processed -> false
-            FailedToProcess -> failedToProcessReason!!.shouldRetry
-                    && expireParams.failedToProcessExpireMinutes.isExpired(updatedAt)
+            FailedToProcess ->
+                failedToProcessReason!!.shouldRetry &&
+                    expireParams.failedToProcessExpireMinutes.isExpired(updatedAt)
 
             Expired -> false
         }
@@ -181,9 +182,9 @@ class BuildInProcess(
 
     override fun toString(): String {
         return "BuildInProcess(productCode='$productCode', buildFullNumber='$buildFullNumber', " +
-                "updatedAt=$updatedAt, downloadUrl=$downloadUrl, missingUrlReason=$missingUrlReason, " +
-                "targetFileContents=${targetFileContents?.take(50)}, failedToProcessReason=$failedToProcessReason, " +
-                "releaseDate=$releaseDate, status=$status)"
+            "updatedAt=$updatedAt, downloadUrl=$downloadUrl, missingUrlReason=$missingUrlReason, " +
+            "targetFileContents=${targetFileContents?.take(50)}, failedToProcessReason=$failedToProcessReason, " +
+            "releaseDate=$releaseDate, status=$status)"
     }
 }
 

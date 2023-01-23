@@ -21,5 +21,4 @@ class ConfigurationPropertiesConfig {
         processingExpireMinutes = processingExpireMinutes,
         failedToProcessExpireMinutes = failedToProcessExpireMinutes
     )
-
 }

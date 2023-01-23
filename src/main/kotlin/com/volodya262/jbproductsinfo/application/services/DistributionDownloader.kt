@@ -22,22 +22,28 @@ class DistributionDownloader(
     fun downloadDistributionToOutputStream(build: BuildInProcess, outputStream: OutputStream) {
         logger.info("Started downloading file for build {}", build)
 
-        distributionsRestTemplate.execute<Unit>(
-            build.downloadUrl!!,
-            HttpMethod.GET,
-            null,
-            { clientHttpResponse ->
-                if (clientHttpResponse.statusCode == HttpStatus.NOT_FOUND) {
-                    throw DistributionNotFound(build.productCode, build.buildFullNumber, build.downloadUrl!!)
-                }
+        try {
+            distributionsRestTemplate.execute<Unit>(
+                build.downloadUrl!!,
+                HttpMethod.GET,
+                null,
+                { clientHttpResponse ->
+                    if (clientHttpResponse.statusCode == HttpStatus.NOT_FOUND) {
+                        throw DistributionNotFound(build.productCode, build.buildFullNumber, build.downloadUrl!!)
+                    }
 
-                if (clientHttpResponse.statusCode.isError) {
-                    throw DistributionDownloadError(build, clientHttpResponse.statusCode.name)
-                }
+                    if (clientHttpResponse.statusCode.isError) {
+                        throw DistributionDownloadError(build, clientHttpResponse.statusCode.name)
+                    }
 
-                StreamUtils.copy(clientHttpResponse.body, outputStream)
-                return@execute
-            })
+                    StreamUtils.copy(clientHttpResponse.body, outputStream)
+                    return@execute
+                }
+            )
+        } catch (ex: Exception) {
+            logger.error("Failed to download file for build {}", build, ex)
+            throw DistributionDownloadError(build, null)
+        }
 
         logger.info("Downloaded file for build {}", build)
     }

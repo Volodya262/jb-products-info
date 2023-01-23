@@ -11,7 +11,6 @@ import com.volodya262.jbproductsinfo.domain.ProductCode
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import org.springframework.web.client.ResourceAccessException
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -67,22 +66,18 @@ class BuildProcessorService(
             buildInProcess.toFailedToProcess(ex.failedToProcessReason)
             buildInProcess.save(jdbcBuildsRepository)
             return !ex.failedToProcessReason.shouldRetry
-        } catch (ex: ResourceAccessException) {
-            logger.error("Caught ResourceAccessException. build: {}", buildInProcess, ex)
-            buildInProcess.toFailedToProcess(FailedToProcessReason.DistributionDownloadError)
-            buildInProcess.save(jdbcBuildsRepository)
-            return !FailedToProcessReason.DistributionDownloadError.shouldRetry
-        } catch (ex: IOException) {
-            logger.error("Caught IOException. build: {}", buildInProcess, ex)
-            buildInProcess.toFailedToProcess(FailedToProcessReason.IOException)
-            buildInProcess.save(jdbcBuildsRepository)
-            return !FailedToProcessReason.IOException.shouldRetry
         } catch (ex: Exception) {
-            logger.error("Caught unknown exception. build: {}", buildInProcess, ex)
-            buildInProcess.toFailedToProcess(FailedToProcessReason.InternalError)
+            logger.error("Caught exception. build: {}", buildInProcess, ex)
+            val failedToProcessReason = ex.toFailedToProcessReason()
+            buildInProcess.toFailedToProcess(failedToProcessReason)
             buildInProcess.save(jdbcBuildsRepository)
-            return !FailedToProcessReason.InternalError.shouldRetry
+            return !failedToProcessReason.shouldRetry
         }
+    }
+
+    private fun Exception.toFailedToProcessReason(): FailedToProcessReason = when (this) {
+        is IOException -> FailedToProcessReason.IOException
+        else -> FailedToProcessReason.InternalError
     }
 
     private fun tryDeleteTempFile(tempFile: File) {

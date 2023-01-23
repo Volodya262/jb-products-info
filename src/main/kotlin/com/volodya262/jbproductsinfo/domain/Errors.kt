@@ -37,7 +37,7 @@ abstract class BuildProcessingError(
 
 class DistributionDownloadError(
     buildInProcess: BuildInProcess,
-    statusCode: String
+    statusCode: String?
 ) : BuildProcessingError(
     errorCode = "DistributionDownloadError",
     readableMessage = "Error occured while downloading the distribution." +
