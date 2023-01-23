@@ -11,6 +11,7 @@ import com.volodya262.jbproductsinfo.domain.FailedToProcessReason
 import com.volodya262.jbproductsinfo.domain.MissingUrlReason
 import com.volodya262.jbproductsinfo.domain.ProductCode
 import com.volodya262.jbproductsinfo.domain.WrongBuildProcessingStatus
+import org.springframework.context.annotation.Profile
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
@@ -23,6 +24,7 @@ import java.time.LocalDate
 import java.time.OffsetDateTime
 
 @Controller
+@Profile("default", "default_api", "test")
 class MainController(
     val buildQueueService: BuildQueueService,
     val jdbcProductsRepository: JdbcProductsRepository,

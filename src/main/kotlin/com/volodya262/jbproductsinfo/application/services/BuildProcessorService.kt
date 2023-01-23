@@ -10,12 +10,14 @@ import com.volodya262.jbproductsinfo.domain.FailedToProcessReason
 import com.volodya262.jbproductsinfo.domain.ProductCode
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 
 @Component
+@Profile("default", "default_worker", "test")
 class BuildProcessorService(
     val jdbcBuildsRepository: JdbcBuildsRepository,
     val distributionDownloader: DistributionDownloader,

@@ -6,6 +6,7 @@ import com.volodya262.jbproductsinfo.application.services.BuildProcessorService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.Profile
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.support.Acknowledgment
 import org.springframework.messaging.MessageHeaders
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component
 import java.time.Duration
 
 @Component
+@Profile("default", "default_worker", "test")
 class BuildsToProcessListener(
     val objectMapper: ObjectMapper,
     val buildProcessorService: BuildProcessorService,

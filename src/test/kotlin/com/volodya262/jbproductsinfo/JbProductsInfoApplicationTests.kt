@@ -40,7 +40,7 @@ class JbProductsInfoApplicationTests(
     fun contextLoads() {
     }
 
-    @Test
+    // TODO delete me
     fun foo() {
         stubForXmlGet("/jetbrains-updates/updates.xml") {
             xml2

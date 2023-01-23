@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class JbProductsInfoApplication
 
 fun main(args: Array<String>) {
-	runApplication<JbProductsInfoApplication>(*args)
+    runApplication<JbProductsInfoApplication>(*args)
 }

@@ -1,0 +1,19 @@
+server:
+  jetty:
+    threads:
+      min: 20
+      max: 20
+  port: 12000
+spring:
+  datasource:
+    hikari:
+      idle-timeout: 10000
+      connection-timeout: 1000
+      maximum-pool-size: 5
+      pool-name: ${spring.application.name}
+    url: jdbc:postgresql://127.0.0.1:11050/${spring.application.name}
+    username: postgres
+    password: pwd
+client:
+  jetbrains-updates-url: https://www.jetbrains.com/updates
+  jetbrains-data-services-url: https://data.services.jetbrains.com

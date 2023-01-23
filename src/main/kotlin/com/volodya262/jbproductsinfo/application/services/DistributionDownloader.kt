@@ -5,6 +5,7 @@ import com.volodya262.jbproductsinfo.domain.DistributionDownloadError
 import com.volodya262.jbproductsinfo.domain.DistributionNotFound
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.context.annotation.Profile
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
@@ -13,6 +14,7 @@ import org.springframework.web.client.RestTemplate
 import java.io.OutputStream
 
 @Component
+@Profile("default", "default_worker", "test")
 class DistributionDownloader(
     private val distributionsRestTemplate: RestTemplate
 ) {

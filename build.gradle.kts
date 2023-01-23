@@ -5,11 +5,11 @@ plugins {
     id("io.spring.dependency-management") version "1.0.15.RELEASE"
     kotlin("jvm") version "1.6.21"
     kotlin("plugin.spring") version "1.6.21"
-    id("org.jlleitschuh.gradle.ktlint") version "10.0.0"
+    id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
 }
 
 group = "com.volodya262"
-version = "0.0.1-SNAPSHOT"
+version = "1"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {

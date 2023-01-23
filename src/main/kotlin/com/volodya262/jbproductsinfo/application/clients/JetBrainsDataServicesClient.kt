@@ -6,20 +6,22 @@ import com.volodya262.jbproductsinfo.domain.ProductCode
 import com.volodya262.jbproductsinfo.domain.ProductRelease
 import com.volodya262.libraries.resttemplateextensions.getForObjectReified
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Component
+@Profile("default", "default_api", "test")
 class JetBrainsDataServicesClient(
     private val jetBrainsDataServicesRestTemplate: RestTemplate,
     @Value("\${client.jetbrains-data-services-url}")
     val baseUrl: String
 ) {
     fun getProductDownloadsInfos(
-        filterProductCode: ProductCode? = null,
-        filterReleasedAfter: LocalDate? = null
+        filterReleasedAfter: LocalDate,
+        filterProductCode: ProductCode? = null
     ): List<ProductAndBuildDownloadInfos> {
         val url = "$baseUrl/products"
         val productInfoDtos = jetBrainsDataServicesRestTemplate.getForObjectReified<List<ProductInfoDto>>(url)!!

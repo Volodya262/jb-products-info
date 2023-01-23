@@ -1,6 +1,9 @@
 server:
   port: 12000
 spring:
+  thymeleaf:
+    prefix: file:src/main/resources/templates/
+    cache: true
   application:
     name: jb-products-info
   profiles:
@@ -9,4 +12,4 @@ builds-in-process-expire:
   queued-expire-minutes: 90
   processing-expire-minutes: 30
   failed-to-process-expire-minutes: 90
-target-builds-age-days: 90
+target-builds-age-days: 90 # TODO change me

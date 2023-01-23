@@ -6,6 +6,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement
 import com.volodya262.jbproductsinfo.domain.BuildInfo
 import com.volodya262.jbproductsinfo.domain.FamilyGroupBuilds
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.getForObject
@@ -13,6 +14,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Component
+@Profile("default", "default_api", "test")
 class JetBrainsUpdatesClient(
     val jetBrainsUpdatesRestTemplate: RestTemplate,
     @Value("\${client.jetbrains-updates-url}")

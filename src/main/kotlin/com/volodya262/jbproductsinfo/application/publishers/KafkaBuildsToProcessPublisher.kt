@@ -4,10 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.volodya262.jbproductsinfo.application.dto.BuildToProcessKafkaMessage
 import com.volodya262.jbproductsinfo.domain.BuildInProcess
 import org.slf4j.LoggerFactory
+import org.springframework.context.annotation.Profile
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.stereotype.Component
 
 @Component
+@Profile("default", "default_api", "test")
 class KafkaBuildsToProcessPublisher(
     private val kafkaTemplate: KafkaTemplate<String, Any>,
     private val objectMapper: ObjectMapper

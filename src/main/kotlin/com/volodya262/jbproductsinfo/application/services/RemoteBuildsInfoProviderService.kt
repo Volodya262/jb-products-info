@@ -12,10 +12,12 @@ import com.volodya262.jbproductsinfo.domain.ProductNotFound
 import com.volodya262.jbproductsinfo.domain.ProductRelease
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 import java.time.LocalDate
 
 @Component
+@Profile("default", "default_api", "test")
 class RemoteBuildsInfoProviderService(
     val jetBrainsDataServicesClient: JetBrainsDataServicesClient,
     val jetBrainsUpdatesClient: JetBrainsUpdatesClient,
@@ -25,11 +27,11 @@ class RemoteBuildsInfoProviderService(
     val logger: Logger = LoggerFactory.getLogger(RemoteBuildsInfoProviderService::class.java)
 
     fun getProductsBuilds(
-        filterProductCode: ProductCode? = null,
-        filterReleasedAfter: LocalDate? = null
+        filterReleasedAfter: LocalDate,
+        filterProductCode: ProductCode? = null
     ): Pair<List<Product>, Map<ProductCode, List<BuildInProcess>>> {
         val allProductsWithDownloadInfo =
-            jetBrainsDataServicesClient.getProductDownloadsInfos(filterProductCode, filterReleasedAfter)
+            jetBrainsDataServicesClient.getProductDownloadsInfos(filterReleasedAfter, filterProductCode)
         val familyGroupBuildsList = jetBrainsUpdatesClient.getBuilds(filterReleasedAfter)
 
         val productAndAssociatedBuildsList = allProductsWithDownloadInfo

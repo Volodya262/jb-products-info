@@ -3,12 +3,14 @@ package com.volodya262.jbproductsinfo.application.schedulers
 import com.volodya262.jbproductsinfo.application.services.BuildQueueService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.context.annotation.Profile
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler
 import org.springframework.scheduling.support.CronTrigger
 import org.springframework.stereotype.Component
 import javax.annotation.PostConstruct
 
 @Component
+@Profile("default", "default_api", "test")
 class CheckAndQueueBuildsScheduler(
     private val buildQueueService: BuildQueueService
 ) {

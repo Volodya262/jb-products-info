@@ -3,7 +3,7 @@ server:
     threads:
       min: 20
       max: 20
-  port: 12000
+  port: 12001
 spring:
   datasource:
     hikari:
@@ -34,9 +34,6 @@ spring:
             ms: 900000 # 15 minutes
     producer:
       client-id: jb-products-info
-client:
-  jetbrains-updates-url: https://www.jetbrains.com/updates
-  jetbrains-data-services-url: https://data.services.jetbrains.com
 kafka:
   builds-to-process:
     concurrency: 1

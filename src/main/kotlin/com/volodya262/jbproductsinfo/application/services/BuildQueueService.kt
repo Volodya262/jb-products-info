@@ -11,9 +11,11 @@ import com.volodya262.jbproductsinfo.domain.ProductCode
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 
 @Component
+@Profile("default", "default_api", "test")
 class BuildQueueService(
     private val remoteBuildsInfoProviderService: RemoteBuildsInfoProviderService,
     private val jdbcProductsRepository: JdbcProductsRepository,
@@ -29,7 +31,7 @@ class BuildQueueService(
 
     fun checkAndQueueBuilds(productCode: ProductCode? = null): List<BuildInProcess> {
         val buildExpireDate = currentDateTimeProvider.getLocalDate().minusDays(targetBuildsAgeDays)
-        val (products, buildsToProcessMap) = remoteBuildsInfoProviderService.getProductsBuilds(productCode, buildExpireDate)
+        val (products, buildsToProcessMap) = remoteBuildsInfoProviderService.getProductsBuilds(buildExpireDate, productCode)
 
         jdbcProductsRepository.updateLocalProducts(products)
 

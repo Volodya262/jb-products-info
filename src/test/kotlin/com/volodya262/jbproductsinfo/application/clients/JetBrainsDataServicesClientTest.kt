@@ -8,23 +8,26 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @SpringBootTest
 @AutoConfigureWireMock
 class JetBrainsDataServicesClientTest(
     @Autowired val jetBrainsDataServicesClient: JetBrainsDataServicesClient
 ) {
+
     @Test
     fun `should get product download infos`() {
         stubForJsonGet("/data-services/products") {
             simpleJson
         }
-
-        val downloadInfos = jetBrainsDataServicesClient.getProductDownloadsInfos()
+        val filterReleasedAfter = LocalDate.parse("2022-01-01", DateTimeFormatter.ISO_DATE)
+        val downloadInfos = jetBrainsDataServicesClient.getProductDownloadsInfos(filterReleasedAfter)
 
         val clionDownloadInfos = downloadInfos.find { it.product.productCode == "CL" }
         assertNotNull(clionDownloadInfos)
-        assertThat(clionDownloadInfos!!.productReleases.toTypedArray(), arrayWithSize(5))
+        assertThat(clionDownloadInfos!!.productReleases.toTypedArray(), arrayWithSize(4))
 
         val dataSpellDownloadInfos = downloadInfos.find { it.product.productCode == "DS" }
         assertNotNull(dataSpellDownloadInfos)

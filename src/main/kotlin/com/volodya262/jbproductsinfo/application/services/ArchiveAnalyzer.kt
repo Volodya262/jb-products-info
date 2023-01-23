@@ -7,6 +7,7 @@ import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 import java.io.BufferedInputStream
 import java.io.File
@@ -16,6 +17,7 @@ import java.nio.charset.StandardCharsets
 import java.nio.file.Paths
 
 @Component
+@Profile("default", "default_worker", "test")
 class ArchiveAnalyzer {
 
     val logger: Logger = LoggerFactory.getLogger(ArchiveAnalyzer::class.java)
