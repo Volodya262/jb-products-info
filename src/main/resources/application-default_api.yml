@@ -17,3 +17,5 @@ spring:
 client:
   jetbrains-updates-url: https://www.jetbrains.com/updates
   jetbrains-data-services-url: https://data.services.jetbrains.com
+  max-total-connections: 2000
+  default-max-per-route: 2000

@@ -23,6 +23,8 @@ client:
   jetbrains-updates-url: http://localhost:${wiremock.server.port}/jetbrains-updates/
   #  jetbrains-data-services-url: https://data.services.jetbrains.com
   jetbrains-data-services-url: http://localhost:${wiremock.server.port}/data-services/
+  max-total-connections: 2000
+  default-max-per-route: 2000
 kafka:
   builds-to-process:
     concurrency: 1
