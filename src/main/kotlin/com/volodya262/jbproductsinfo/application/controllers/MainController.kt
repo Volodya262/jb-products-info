@@ -6,14 +6,13 @@ import com.volodya262.jbproductsinfo.application.services.BuildQueueService
 import com.volodya262.jbproductsinfo.domain.BuildInProcess
 import com.volodya262.jbproductsinfo.domain.BuildInProcessEvent
 import com.volodya262.jbproductsinfo.domain.BuildInProcessStatus
-import com.volodya262.jbproductsinfo.domain.BuildNotFound
 import com.volodya262.jbproductsinfo.domain.FailedToProcessReason
 import com.volodya262.jbproductsinfo.domain.MissingUrlReason
 import com.volodya262.jbproductsinfo.domain.ProductCode
+import com.volodya262.jbproductsinfo.domain.ProductNotFound
 import com.volodya262.jbproductsinfo.domain.WrongBuildProcessingStatus
 import org.springframework.context.annotation.Profile
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
+import org.springframework.http.MediaType
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
@@ -38,7 +37,7 @@ class MainController(
         return "/main"
     }
 
-    @GetMapping("/status")
+    @GetMapping("/status", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseBody
     fun status(): AppStateDto =
         getAppState()
@@ -75,27 +74,29 @@ class MainController(
         buildQueueService.checkAndQueueBuilds(productCode)
     }
 
-    @GetMapping("/{productCode}")
+    @GetMapping("/{productCode}", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseBody
-    fun getBuildsByProductCode(@PathVariable productCode: ProductCode): List<ProductBuildInfoDto> {
+    fun getStatusOfProduct(@PathVariable productCode: ProductCode): List<ProductBuildInfoDto> {
+
+        val product = jdbcProductsRepository.getProducts()
+            .find { it.productCode == productCode || it.alternativeCodes.contains(productCode) }
+            ?: throw ProductNotFound(productCode)
+
         return jdbcBuildsRepository.getBuilds()
+            .filter { it.productCode == product.productCode }
             .sortedByDescending { it.updatedAt }
             .map { ProductBuildInfoDto.from(it) }
     }
 
-    @GetMapping("/{productCode}/{buildNumber}")
+    @GetMapping("/{productCode}/{buildNumber}", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseBody
-    fun getBuildProductInfo(@PathVariable productCode: ProductCode, @PathVariable buildNumber: String): ResponseEntity<Any> {
-        return try {
-            val build = jdbcBuildsRepository.getBuild(productCode, buildNumber)
-            if (build.status != BuildInProcessStatus.Processed) {
-                throw WrongBuildProcessingStatus(productCode, buildNumber, build.status)
-            }
-
-            ResponseEntity.ok(build.targetFileContents!!)
-        } catch (ex: BuildNotFound) {
-            ResponseEntity(ex, HttpStatus.NOT_FOUND)
+    fun getBuildProductInfo(@PathVariable productCode: ProductCode, @PathVariable buildNumber: String): String {
+        val build = jdbcBuildsRepository.getBuild(productCode, buildNumber)
+        if (build.status != BuildInProcessStatus.Processed) {
+            throw WrongBuildProcessingStatus(productCode, buildNumber, build.status)
         }
+
+        return build.targetFileContents!!
     }
 }
 

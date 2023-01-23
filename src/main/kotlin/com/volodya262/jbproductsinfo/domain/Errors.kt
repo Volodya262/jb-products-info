@@ -5,9 +5,14 @@ abstract class BusinessLogicError(
     val readableMessage: String
 ) : RuntimeException("Business logic code: $errorCode; $readableMessage")
 
+abstract class NotFoundBusinessLogicError(
+    errorCode: String,
+    readableMessage: String
+) : BusinessLogicError(errorCode, readableMessage)
+
 class ProductNotFound(
     productCode: ProductCode
-) : BusinessLogicError(
+) : NotFoundBusinessLogicError(
     errorCode = "ProductNotFound",
     readableMessage = "Product not found by product code $productCode. Maybe it has only old builds"
 )
@@ -15,7 +20,7 @@ class ProductNotFound(
 class BuildNotFound(
     productCode: ProductCode,
     buildFullNumber: String
-) : BusinessLogicError(
+) : NotFoundBusinessLogicError(
     errorCode = "BuildNotFound",
     readableMessage = "Build not found by productCode $productCode and buildFullNumber $buildFullNumber"
 )
