@@ -9,7 +9,7 @@ spring:
   profiles:
     active: ${APP_PROFILE:default}
 builds-in-process-expire:
-  queued-expire-minutes: 90
+  queued-expire-minutes: 60
   processing-expire-minutes: 30
   failed-to-process-expire-minutes: 90
-target-builds-age-days: 90 # TODO change me
+target-builds-age-days: 365
