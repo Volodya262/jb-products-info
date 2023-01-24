@@ -7,11 +7,14 @@ import com.volodya262.jbproductsinfo.application.repository.JdbcProductsReposito
 import com.volodya262.jbproductsinfo.domain.BuildInProcess
 import com.volodya262.jbproductsinfo.domain.BuildInProcessStatus
 import com.volodya262.jbproductsinfo.domain.CurrentDateTimeProvider
-import com.volodya262.libraries.testextensions.stubForJsonGet
-import com.volodya262.libraries.testextensions.stubForXmlGet
+import com.volodya262.libraries.testutils.stubForJsonGet
+import com.volodya262.libraries.testutils.stubForXmlGet
 import io.mockk.every
 import io.mockk.slot
 import io.mockk.verify
+import java.time.LocalDate
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.hasSize
 import org.intellij.lang.annotations.Language
@@ -24,9 +27,6 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.post
-import java.time.LocalDate
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
 
 @SpringBootTest
 @AutoConfigureWireMock

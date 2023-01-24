@@ -1,15 +1,15 @@
 package com.volodya262.jbproductsinfo.application.clients
 
 import com.volodya262.jbproductsinfo.domain.BuildInfo
-import com.volodya262.libraries.testextensions.stubForXmlGet
+import com.volodya262.libraries.testutils.stubForXmlGet
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.containsInAnyOrder
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 @SpringBootTest
 @AutoConfigureWireMock

@@ -45,14 +45,6 @@ data class BuildInfo(
     val buildFullNumber: String
 )
 
-class BuildToProcess(
-    val productCode: String,
-    val buildFullNumber: String,
-    val buildReleaseDate: LocalDate,
-    val downloadUrl: String? = null,
-    val missingUrlReason: MissingUrlReason? = null
-)
-
 enum class MissingUrlReason {
     NoLinuxDistribution,
     FailedToFindAssociatedVersion

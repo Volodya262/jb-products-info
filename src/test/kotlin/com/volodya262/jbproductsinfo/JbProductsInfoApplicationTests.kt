@@ -6,8 +6,8 @@ import com.volodya262.jbproductsinfo.application.repository.JdbcBuildsRepository
 import com.volodya262.jbproductsinfo.application.repository.JdbcProductsRepository
 import com.volodya262.jbproductsinfo.application.services.BuildQueueService
 import com.volodya262.jbproductsinfo.application.services.RemoteBuildsInfoProviderService
-import com.volodya262.libraries.testextensions.stubForJsonGet
-import com.volodya262.libraries.testextensions.stubForXmlGet
+import com.volodya262.libraries.testutils.stubForJsonGet
+import com.volodya262.libraries.testutils.stubForXmlGet
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -40,7 +40,6 @@ class JbProductsInfoApplicationTests(
     fun contextLoads() {
     }
 
-    // TODO delete me
     fun foo() {
         stubForXmlGet("/jetbrains-updates/updates.xml") {
             xml2

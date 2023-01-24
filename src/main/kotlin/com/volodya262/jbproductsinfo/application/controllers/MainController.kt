@@ -11,6 +11,8 @@ import com.volodya262.jbproductsinfo.domain.MissingUrlReason
 import com.volodya262.jbproductsinfo.domain.ProductCode
 import com.volodya262.jbproductsinfo.domain.ProductNotFound
 import com.volodya262.jbproductsinfo.domain.WrongBuildProcessingStatus
+import java.time.LocalDate
+import java.time.OffsetDateTime
 import org.springframework.context.annotation.Profile
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Controller
@@ -19,8 +21,6 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.ResponseBody
-import java.time.LocalDate
-import java.time.OffsetDateTime
 
 @Controller
 @Profile("default", "default_api", "test")
@@ -57,7 +57,7 @@ class MainController(
                 lastUpdate = it.lastUpdate,
                 builds = builds[it.productCode] ?: emptyList()
             )
-        }
+        }.sortedBy { it.productName }
 
         return AppStateDto(productsDto)
     }
@@ -76,7 +76,7 @@ class MainController(
 
     @GetMapping("/{productCode}", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseBody
-    fun getStatusOfProduct(@PathVariable productCode: ProductCode): List<ProductBuildInfoDto> {
+    fun getBuildsByProductCode(@PathVariable productCode: ProductCode): List<ProductBuildInfoDto> {
 
         val product = jdbcProductsRepository.getProducts()
             .find { it.productCode == productCode || it.alternativeCodes.contains(productCode) }
@@ -91,7 +91,11 @@ class MainController(
     @GetMapping("/{productCode}/{buildNumber}", produces = [MediaType.APPLICATION_JSON_VALUE])
     @ResponseBody
     fun getBuildProductInfo(@PathVariable productCode: ProductCode, @PathVariable buildNumber: String): String {
-        val build = jdbcBuildsRepository.getBuild(productCode, buildNumber)
+        val product = jdbcProductsRepository.getProducts()
+            .find { it.productCode == productCode || it.alternativeCodes.contains(productCode) }
+            ?: throw ProductNotFound(productCode)
+
+        val build = jdbcBuildsRepository.getBuild(product.productCode, buildNumber)
         if (build.status != BuildInProcessStatus.Processed) {
             throw WrongBuildProcessingStatus(productCode, buildNumber, build.status)
         }

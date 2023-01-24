@@ -1,4 +1,4 @@
-package com.volodya262.libraries.testextensions
+package com.volodya262.libraries.testutils
 
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse

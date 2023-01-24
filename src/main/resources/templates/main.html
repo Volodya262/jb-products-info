@@ -11,6 +11,9 @@
     <h1>
         Application status
     </h1>
+    <p th:if="${#lists.isEmpty(appState.products)}">
+        No products added yet
+    </p>
     <ul>
         <li th:each="prod: ${appState.products}" style="margin-bottom: 8px">
             <h2 th:text="${prod.productName}"></h2>

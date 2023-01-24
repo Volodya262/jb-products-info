@@ -29,7 +29,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
     implementation("org.springframework.boot:spring-boot-starter-web")
-//    implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.kafka:spring-kafka")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -39,7 +38,7 @@ dependencies {
     runtimeOnly("org.postgresql:postgresql")
 
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.14.1")
-    implementation("org.apache.httpcomponents:httpclient")
+    implementation("org.apache.httpcomponents:httpclient:4.5.14")
     implementation("org.apache.commons:commons-compress:1.22")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -49,13 +48,15 @@ dependencies {
     testImplementation("com.jayway.jsonpath:json-path:2.7.0")
     testImplementation("com.jayway.jsonpath:json-path-assert:2.7.0")
     testImplementation("org.hamcrest:hamcrest:2.2")
+    testImplementation("org.awaitility:awaitility:4.0.2")
+    testImplementation("org.awaitility:awaitility-kotlin:4.0.2")
 }
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
         jvmTarget = "17"
-//        allWarningsAsErrors = true
+        allWarningsAsErrors = true
     }
 }
 

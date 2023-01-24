@@ -3,6 +3,9 @@ package com.volodya262.jbproductsinfo.domain
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
+import java.time.LocalDate
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.empty
 import org.hamcrest.Matchers.hasSize
@@ -11,14 +14,11 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.time.LocalDate
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
 
 class BuildInProcessTest {
     private val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
 
-    val currentDateTimeProviderMock: CurrentDateTimeProvider = mockk<CurrentDateTimeProvider>(relaxed = true)
+    private val currentDateTimeProviderMock: CurrentDateTimeProvider = mockk<CurrentDateTimeProvider>(relaxed = true)
 
     @BeforeEach
     fun beforeEach() {

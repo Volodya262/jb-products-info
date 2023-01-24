@@ -1,6 +1,8 @@
 package com.volodya262.jbproductsinfo.application.clients
 
-import com.volodya262.libraries.testextensions.stubForJsonGet
+import com.volodya262.libraries.testutils.stubForJsonGet
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.arrayWithSize
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -8,8 +10,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 @SpringBootTest
 @AutoConfigureWireMock
